@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private NsdManager.DiscoveryListener mDiscoveryListener;
     private NsdManager.ResolveListener mResolveListener;
     private NsdServiceInfo mServiceInfo;
-    public String mRPiAddress;
-    private static final String SERVICE_TYPE = "_workstation._tcp.";
+    public static String mRPiAddress;
+    private static final String SERVICE_TYPE = "_sem._tcp.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +48,14 @@ public class MainActivity extends AppCompatActivity {
         initializeResolveListener();
         initializeDiscoveryListener();
         mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
-        System.out.println(String.format("This is the address: %s",mRPiAddress));
         new json_client_ping_test().execute();
         new json_client_pingparam_test().execute();
     }
 
     private void initializeDiscoveryListener() {
-
         // Instantiate a new DiscoveryListener
         mDiscoveryListener = new NsdManager.DiscoveryListener() {
+
 
             //  Called as soon as service discovery begins.
             @Override
@@ -70,10 +69,12 @@ public class MainActivity extends AppCompatActivity {
                 String type = service.getServiceType();
                 Log.d("NSD", "Service Name=" + name);
                 Log.d("NSD", "Service Type=" + type);
-                if (type.equals(SERVICE_TYPE) && name.contains("garagedoor")) {
+                if (type.equals(SERVICE_TYPE)) {
                     Log.d("NSD", "Service Found @ '" + name + "'");
                     mNsdManager.resolveService(service, mResolveListener);
                 }
+
+
             }
 
             @Override
@@ -110,10 +111,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
                 mServiceInfo = serviceInfo;
-
                 // Port is being returned as 9. Not needed.
                 //int port = mServiceInfo.getPort();
-
                 InetAddress host = mServiceInfo.getHost();
                 String address = host.getHostAddress();
                 Log.d("NSD", "Resolved address = " + address);
@@ -155,7 +154,11 @@ public class MainActivity extends AppCompatActivity {
             // The JSON-RPC 2.0 server URL
             URL serverURL = null;
             try {
-                serverURL = new URL("http://192.168.1.78:9999/jsonrpc");
+                while(mRPiAddress.isEmpty()){
+                    assert true;
+                }
+                String url = String.format("http://%s:9999/jsonrpc", mRPiAddress);
+                serverURL = new URL(url);
             } catch (MalformedURLException e) {
                 // handle exception...
             }
@@ -202,7 +205,11 @@ public class MainActivity extends AppCompatActivity {
             // The JSON-RPC 2.0 server URL
             URL serverURL = null;
             try {
-                serverURL = new URL("http://192.168.1.78:9999/jsonrpc");
+                while(mRPiAddress.isEmpty()){
+                    assert true;
+                }
+                String url = String.format("http://%s:9999/jsonrpc", mRPiAddress);
+                serverURL = new URL(url);
             } catch (MalformedURLException e) {
                 // handle exception...
             }
@@ -246,7 +253,11 @@ public class MainActivity extends AppCompatActivity {
             // The JSON-RPC 2.0 server URL
             URL serverURL = null;
             try {
-                serverURL = new URL("http://192.168.1.78:9999/jsonrpc");
+                while(mRPiAddress.isEmpty()){
+                    assert true;
+                }
+                String url = String.format("http://%s:9999/jsonrpc", mRPiAddress);
+                serverURL = new URL(url);
             } catch (MalformedURLException e) {
                 // handle exception...
             }
