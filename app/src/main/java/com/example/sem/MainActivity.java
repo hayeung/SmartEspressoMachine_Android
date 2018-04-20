@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private NsdManager.ResolveListener mResolveListener;
     private NsdServiceInfo mServiceInfo;
     public static String mRPiAddress;
+    public static String coffee_status = "";
     private static final String SERVICE_TYPE = "_sem._tcp.";
 
     @Override
@@ -48,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
         initializeResolveListener();
         initializeDiscoveryListener();
         mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
-        new json_client_ping_test().execute();
-        new json_client_pingparam_test().execute();
+        //new json_client_ping_test().execute();
+        //new json_client_pingparam_test().execute();
     }
 
     private void initializeDiscoveryListener() {
@@ -143,8 +144,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void make_espresso(View view){
         new make_espresso().execute();
-        Intent intent = new Intent(this, MakeEspressoActivity.class);
-        startActivity(intent);
+        new json_client_ping_test().execute();
+        new json_client_pingparam_test().execute();
+        if(coffee_status == "SUCCESS") {
+            Intent intent = new Intent(this, MakeEspressoActivity.class);
+            startActivity(intent);
+        }
+        if(coffee_status != "SUCCESS") {
+            Intent intent = new Intent(this, MakeEspressoActivity.class);
+            startActivity(intent);
+        }
+
     }
 
     private static class json_client_pingparam_test extends AsyncTask<Void, Void, Void>{
@@ -185,8 +195,10 @@ public class MainActivity extends AppCompatActivity {
             /*System.err.println(e.getMessage());*/
                 // handle exception...
             }
-            if (response.indicatesSuccess())
+            if (response.indicatesSuccess()) {
                 System.out.println(response.getResult());
+                coffee_status = String.format("%s", response.getResult());
+            }
             else
                 System.out.println(response.getError().getMessage());
             return null;
