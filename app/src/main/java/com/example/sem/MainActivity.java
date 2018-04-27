@@ -30,6 +30,7 @@ import android.net.nsd.NsdManager;
 import android.util.Log;
 
 
+
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     private NsdManager mNsdManager;
@@ -74,8 +75,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("NSD", "Service Found @ '" + name + "'");
                     mNsdManager.resolveService(service, mResolveListener);
                 }
-
-
             }
 
             @Override
@@ -139,11 +138,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void schedule_menu(View view){
         Intent intent = new Intent(this, ScheduleActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, mRPiAddress);
         startActivity(intent);
     }
 
     public void make_espresso(View view){
-        new make_espresso().execute();
+       // new make_espresso().execute();
         new json_client_ping_test().execute();
         new json_client_pingparam_test().execute();
         if(coffee_status == "SUCCESS") {
@@ -178,11 +178,11 @@ public class MainActivity extends AppCompatActivity {
             String method = "sem_do";
             Map<String,Object> params = new HashMap<String,Object>();
             params.put("param1", "SEM");
-            params.put("param2", "Rocks.");
+            params.put("param2", "Rocks .");
             params.put("rpc_call", "ping_param");
             long epoch = System.currentTimeMillis()/1000;
             params.put("ts", epoch);
-            String str = String.format("param1=SEM&param2=Rocks.&rpc_call=ping_param" +
+            String str = String.format("param1=SEM&param2=Rocks%%20.&rpc_call=ping_param" +
                     "&ts=%d87677fc06b0afc08cb86e008183390e5", epoch);
             String sign = new String(Hex.encodeHex(DigestUtils.sha256(str)));
             params.put("sign", sign);
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
                     "%d87677fc06b0afc08cb86e008183390e5", epoch);
             String sign = new String(Hex.encodeHex(DigestUtils.sha256(str)));
             params.put("sign", sign);
-            String id = "09";
+            String id = "03";
             JSONRPC2Request request = new JSONRPC2Request(method, params, id);
             JSONRPC2Response response = null;
             try {
@@ -306,4 +306,6 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
         }
     }
+
+
 }

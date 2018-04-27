@@ -6,14 +6,119 @@
     android:layout_height="match_parent"
     tools:context="com.example.sem.ScheduleActivity">
 
-    <CalendarView
-        android:id="@+id/calendarView"
+    <TimePicker
+        android:id="@+id/timePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="31dp"
-        android:layout_marginStart="31dp"
-        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/addButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="172dp"
+        android:layout_marginStart="172dp"
+        android:layout_marginTop="8dp"
+        android:onClick="create_schedule"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Wednesday"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+    <ToggleButton
+        android:id="@+id/Sunday"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="17dp"
+        android:text="ToggleButton"
+        android:textOff="S"
+        android:textOn="S"
+        app:layout_constraintEnd_toStartOf="@+id/Monday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <ToggleButton
+        android:id="@+id/Monday"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="17dp"
+        android:checked="false"
+        android:text="ToggleButton"
+        android:textOff="M"
+        android:textOn="M"
+        app:layout_constraintEnd_toStartOf="@+id/Tuesday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/Sunday"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <ToggleButton
+        android:id="@+id/Tuesday"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="17dp"
+        android:text="ToggleButton"
+        android:textOff="T"
+        android:textOn="T"
+        app:layout_constraintEnd_toStartOf="@+id/Wednesday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/Monday"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <ToggleButton
+        android:id="@+id/Wednesday"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="17dp"
+        android:text="ToggleButton"
+        android:textOff="W"
+        android:textOn="W"
+        app:layout_constraintEnd_toStartOf="@+id/Thursday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/Tuesday"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <ToggleButton
+        android:id="@+id/Thursday"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="17dp"
+        android:text="ToggleButton"
+        android:textOff="T"
+        android:textOn="T"
+        app:layout_constraintEnd_toStartOf="@+id/Friday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/Wednesday"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <ToggleButton
+        android:id="@+id/Friday"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="17dp"
+        android:text="ToggleButton"
+        android:textOff="F"
+        android:textOn="F"
+        app:layout_constraintEnd_toStartOf="@+id/Saturday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/Thursday"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <ToggleButton
+        android:id="@+id/Saturday"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="17dp"
+        android:text="ToggleButton"
+        android:textOff="S"
+        android:textOn="S"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/Friday"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
 </android.support.constraint.ConstraintLayout>
