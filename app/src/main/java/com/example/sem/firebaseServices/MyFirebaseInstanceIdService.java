@@ -1,56 +1,58 @@
-package com.example.sem;
+package com.example.sem.firebaseServices;
 
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-// The Client sessions package
-import com.thetransactioncompany.jsonrpc2.client.*;
-
-// The Base package for representing JSON-RPC 2.0 messages
-import com.thetransactioncompany.jsonrpc2.*;
-
-// The JSON Smart package for JSON encoding/decoding (optional)
-
-// For creating URLs
-import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.lang.Object;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.binary.Hex;
 import android.content.Context;
-import android.net.nsd.NsdServiceInfo;
 import android.net.nsd.NsdManager;
+import android.net.nsd.NsdServiceInfo;
+import android.os.AsyncTask;
 import android.util.Log;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
+import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
+import com.thetransactioncompany.jsonrpc2.client.JSONRPC2Session;
+import com.thetransactioncompany.jsonrpc2.client.JSONRPC2SessionException;
 
-import com.google.gson.Gson;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.net.URLEncoder;
 
+import static android.content.ContentValues.TAG;
 
-public class MainActivity extends AppCompatActivity {
-    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+/**
+ * Created by Hayden Yeung on 5/5/2018.
+ */
+
+public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
+
     private NsdManager mNsdManager;
     private NsdManager.DiscoveryListener mDiscoveryListener;
     private NsdManager.ResolveListener mResolveListener;
     private NsdServiceInfo mServiceInfo;
     public static String mRPiAddress;
-    public static String coffee_status = "";
+    public static String refreshedToken;
     private static final String SERVICE_TYPE = "_sem._tcp.";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public void onTokenRefresh(){
+        super.onTokenRefresh();
+        // Get updated InstanceID token.
+        refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "Refreshed token: " + refreshedToken);
+
         mRPiAddress = "";
         mNsdManager = (NsdManager)(getApplicationContext().getSystemService(Context.NSD_SERVICE));
         initializeResolveListener();
         initializeDiscoveryListener();
         mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
+        sendRegistrationToServer();
     }
 
     private void initializeDiscoveryListener() {
@@ -119,34 +121,12 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-    public void make_espresso(View view){
-        // new make_espresso().execute();
+    private void sendRegistrationToServer() {
         new sort_form().execute();
-
-        if(coffee_status == "SUCCESS") {
-            Intent intent = new Intent(this, MakeEspressoActivity.class);
-            startActivity(intent);
-        }
-        if(coffee_status != "SUCCESS") {
-            Intent intent = new Intent(this, MakeEspressoActivity.class);
-            startActivity(intent);
-        }
-
+        new upload_firebase_token().execute();
     }
 
-    public void schedule_list(View view){
-        Intent intent = new Intent(this, ScheduleListActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, mRPiAddress);
-        startActivity(intent);
-    }
-
-    public void scheduler_menu(View view){
-        Intent intent = new Intent(this, SchedulerActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, mRPiAddress);
-        startActivity(intent);
-    }
-
-    private static class json_client_ping_test extends AsyncTask<Void, Void, Void>{
+    private static class upload_firebase_token extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -166,123 +146,24 @@ public class MainActivity extends AppCompatActivity {
             // Construct new request
             String method = "sem_do";
             Map<String,Object> params = new HashMap<String,Object>();
-            params.put("rpc_call", "ping");
+            params.put("rpc_call", "upload_firebase_token");
+            params.put("token", refreshedToken);
+            String token = null;
+            try {
+                token = URLEncoder.encode(refreshedToken, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            System.out.println(mRPiAddress);
+            System.out.println(refreshedToken);
             long epoch = System.currentTimeMillis()/1000;
             params.put("ts", epoch);
-            String str = String.format("rpc_call=ping&ts=%d87677fc06b0afc08cb86e008183390e5", epoch);
+            String str = String.format("rpc_call=upload_firebase_token&token=%s&ts=" +
+                    "%d87677fc06b0afc08cb86e008183390e5", token, epoch);
             String sign = new String(Hex.encodeHex(DigestUtils.sha256(str)));
+            System.out.println(sign);
             params.put("sign", sign);
-            String id = "01";
-            JSONRPC2Request request = new JSONRPC2Request(method, params, id);
-            JSONRPC2Response response = null;
-            try {
-                response = mySession.send(request);
-            } catch (JSONRPC2SessionException e) {
-            /*System.err.println(e.getMessage());*/
-                // handle exception...
-            }
-            if(response != null) {
-                if (response.indicatesSuccess())
-                    System.out.println(response.getResult());
-                else
-                    System.out.println(response.getError().getMessage());
-            }
-            else{
-                System.out.println("ERROR");
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-        }
-    }
-
-    private static class json_client_pingparam_test extends AsyncTask<Void, Void, Void>{
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            // The JSON-RPC 2.0 server URL
-            URL serverURL = null;
-            try {
-                while(mRPiAddress.isEmpty()){
-                    assert true;
-                }
-                String url = String.format("http://%s:9999/jsonrpc", mRPiAddress);
-                serverURL = new URL(url);
-            } catch (MalformedURLException e) {
-                // handle exception...
-            }
-            // Create new JSON-RPC 2.0 client session
-            JSONRPC2Session mySession = new JSONRPC2Session(serverURL);
-            // Construct new request
-            String method = "sem_do";
-            Map<String,Object> params = new HashMap<String,Object>();
-            params.put("param1", "SEM");
-            params.put("param2", "Rocks .");
-            params.put("rpc_call", "ping_param");
-            long epoch = System.currentTimeMillis()/1000;
-            params.put("ts", epoch);
-            String str = String.format("param1=SEM&param2=Rocks%%20.&rpc_call=ping_param" +
-                    "&ts=%d87677fc06b0afc08cb86e008183390e5", epoch);
-            String sign = new String(Hex.encodeHex(DigestUtils.sha256(str)));
-            params.put("sign", sign);
-            String id = "02";
-            JSONRPC2Request request = new JSONRPC2Request(method, params, id);
-            JSONRPC2Response response = null;
-            try {
-                response = mySession.send(request);
-            } catch (JSONRPC2SessionException e) {
-            /*System.err.println(e.getMessage());*/
-                // handle exception...
-            }
-            if(response != null) {
-                if (response.indicatesSuccess())
-                    System.out.println(response.getResult());
-                else
-                    System.out.println(response.getError().getMessage());
-            }
-            else{
-                System.out.println("ERROR");
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-        }
-    }
-
-    private static class make_espresso extends AsyncTask<Void, Void, Void>{
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            // The JSON-RPC 2.0 server URL
-            URL serverURL = null;
-            try {
-                while(mRPiAddress.isEmpty()){
-                    assert true;
-                }
-                String url = String.format("http://%s:9999/jsonrpc", mRPiAddress);
-                serverURL = new URL(url);
-            } catch (MalformedURLException e) {
-                // handle exception...
-            }
-            // Create new JSON-RPC 2.0 client session
-            JSONRPC2Session mySession = new JSONRPC2Session(serverURL);
-            // Construct new request
-            String method = "sem_do";
-            Map<String,Object> params = new HashMap<String,Object>();
-            params.put("rpc_call", "make_coffee_now");
-            long epoch = System.currentTimeMillis()/1000;
-            params.put("ts", epoch);
-            String str = String.format("rpc_call=make_coffee_now&ts=" +
-                    "%d87677fc06b0afc08cb86e008183390e5", epoch);
-            String sign = new String(Hex.encodeHex(DigestUtils.sha256(str)));
-            params.put("sign", sign);
-            String id = "09";
+            String id = "13";
             JSONRPC2Request request = new JSONRPC2Request(method, params, id);
             JSONRPC2Response response = null;
             try {
@@ -327,12 +208,10 @@ public class MainActivity extends AppCompatActivity {
             // Create new JSON-RPC 2.0 client session
             JSONRPC2Session mySession = new JSONRPC2Session(serverURL);
             // Construct new request
-            String method = "param_sort_and_format";
+            String method = "param_sign";
             Map<String,Object> params = new HashMap<String,Object>();
-            params.put("cron_text", "20 6 * * 2");
-            params.put("enabled", 1);
-            params.put("id", 0);
-            params.put("rpc_call", "add_schedule");
+            params.put("token", refreshedToken);
+            params.put("rpc_call", "upload_firebase_token");
             long epoch = System.currentTimeMillis()/1000;
             params.put("ts", epoch);
             String id = "99";
@@ -362,6 +241,4 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
         }
     }
-
-
 }

@@ -1,5 +1,6 @@
 package com.example.sem;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.cronutils.builder.CronBuilder;
@@ -32,7 +34,7 @@ import static com.cronutils.model.field.expression.FieldExpressionFactory.*;
 
 
 
-public class ScheduleActivity extends AppCompatActivity {
+public class SchedulerActivity extends AppCompatActivity {
 
     ToggleButton tb_sun, tb_mon, tb_tue, tb_wed, tb_thu, tb_fri, tb_sat;
     ImageButton add_schedule;
@@ -40,12 +42,13 @@ public class ScheduleActivity extends AppCompatActivity {
     int i_sun, i_mon, i_tue, i_wed, i_thu, i_fri, i_sat, min, hour;
     public static String mRPiAddress;
     public static String cronText;
-    static boolean True = true;
+    public static String cronURL;
+    public static CharSequence text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_schedule);
+        setContentView(R.layout.activity_scheduler);
         Intent intent = getIntent();
         mRPiAddress = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         System.out.println(mRPiAddress);
@@ -147,45 +150,146 @@ public class ScheduleActivity extends AppCompatActivity {
                 // Code here executes on main thread after user presses button
                 if(i_sun == 1){
                     Cron unixBuiltCronExpression = buildCronSun(min, hour);
-                    String cronText = unixBuiltCronExpression.asString();
-                    System.out.println(cronText);
+                    cronText = unixBuiltCronExpression.asString();
+                    cronURL = cron_url(cronText);
                     new schedule().execute();
+                    try {
+                        //set time in mili
+                        Thread.sleep(1000);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    Context context = getApplicationContext();
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                 }
                 if(i_mon == 1){
                     Cron unixBuiltCronExpression = buildCronMon(min, hour);
-                    String unixBuiltCronExpressionString = unixBuiltCronExpression.asString();
-                    System.out.println(unixBuiltCronExpressionString );
+                    cronText = unixBuiltCronExpression.asString();
+                    cronURL = cron_url(cronText);
+                    new schedule().execute();
+                    try {
+                        //set time in mili
+                        Thread.sleep(1000);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    Context context = getApplicationContext();
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                 }
                 if(i_tue == 1){
                     Cron unixBuiltCronExpression = buildCronTue(min, hour);
-                    String unixBuiltCronExpressionString = unixBuiltCronExpression.asString();
-                    System.out.println(unixBuiltCronExpressionString );
+                    cronText = unixBuiltCronExpression.asString();
+                    cronURL = cron_url(cronText);
+                    new schedule().execute();
+                    try {
+                        //set time in mili
+                        Thread.sleep(1000);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    Context context = getApplicationContext();
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                 }
                 if(i_wed == 1){
                     Cron unixBuiltCronExpression = buildCronWed(min, hour);
-                    String unixBuiltCronExpressionString = unixBuiltCronExpression.asString();
-                    System.out.println(unixBuiltCronExpressionString );
+                    cronText = unixBuiltCronExpression.asString();
+                    cronURL = cron_url(cronText);
+                    new schedule().execute();
+                    try {
+                        //set time in mili
+                        Thread.sleep(1000);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    Context context = getApplicationContext();
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                 }
                 if(i_thu == 1){
                     Cron unixBuiltCronExpression = buildCronThu(min, hour);
-                    String unixBuiltCronExpressionString = unixBuiltCronExpression.asString();
-                    System.out.println(unixBuiltCronExpressionString );
+                    cronText = unixBuiltCronExpression.asString();
+                    cronURL = cron_url(cronText);
+                    new schedule().execute();
+                    try {
+                        //set time in mili
+                        Thread.sleep(1000);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    Context context = getApplicationContext();
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                 }
                 if(i_fri == 1){
                     Cron unixBuiltCronExpression = buildCronFri(min, hour);
-                    String unixBuiltCronExpressionString = unixBuiltCronExpression.asString();
-                    System.out.println(unixBuiltCronExpressionString );
+                    cronText = unixBuiltCronExpression.asString();
+                    cronURL = cron_url(cronText);
+                    new schedule().execute();
+                    try {
+                        //set time in mili
+                        Thread.sleep(1000);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    Context context = getApplicationContext();
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                 }
                 if(i_sat == 1){
                     Cron unixBuiltCronExpression = buildCronSat(min, hour);
-                    String unixBuiltCronExpressionString = unixBuiltCronExpression.asString();
-                    System.out.println(unixBuiltCronExpressionString );
+                    cronText = unixBuiltCronExpression.asString();
+                    cronURL = cron_url(cronText);
+                    new schedule().execute();
+                    try {
+                        //set time in mili
+                        Thread.sleep(1000);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    Context context = getApplicationContext();
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                 }
             }
         });
     }
 
-    private static class schedule extends AsyncTask<Void, Void, Void> {
+    private static String cron_url(String s){
+        StringBuilder sB = new StringBuilder();
+        for(int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+            if(c == ' '){
+                sB.append("%20");
+            }
+            else if(c == '*'){
+                sB.append("%2A");
+            }
+            else{
+                sB.append(c);
+            }
+        }
+        String cron = sB.toString();
+        return cron;
+    }
+
+    private class schedule extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -205,30 +309,37 @@ public class ScheduleActivity extends AppCompatActivity {
             // Construct new request
             String method = "sem_do";
             Map<String,Object> params = new HashMap<String,Object>();
-            params.put("cron_text", "0 0 * * 0");
-            params.put("enabled", "True");
+            params.put("coffee_type", "ESPRESSO");
+            params.put("cron_text", cronText);
+            params.put("enabled", 1);
             params.put("id", 0);
             params.put("rpc_call", "add_schedule");
             long epoch = System.currentTimeMillis()/1000;
             params.put("ts", epoch);
-            String str = String.format("cron_text=0%%200%%20*%%20*%%200&enabled=True&id=0&rpc_call=add_schedule" +
-                    "&ts=%d87677fc06b0afc08cb86e008183390e5", epoch);
+            String str = String.format("coffee_type=ESPRESSO&cron_text=%s&enabled=1&id=0&rpc_call=add_schedule" +
+                    "&ts=%d87677fc06b0afc08cb86e008183390e5", cronURL, epoch);
             String sign = new String(Hex.encodeHex(DigestUtils.sha256(str)));
             params.put("sign", sign);
-            String id = "04";
+            String id = "03";
             JSONRPC2Request request = new JSONRPC2Request(method, params, id);
             JSONRPC2Response response = null;
             try {
-                System.out.println("here");
                 response = mySession.send(request);
             } catch (JSONRPC2SessionException e) {
             /*System.err.println(e.getMessage());*/
                 // handle exception...
             }
-            if (response.indicatesSuccess())
-                System.out.println(response.getResult());
-            else
-                System.out.println(response.getError().getMessage());
+            if(response != null) {
+                if (response.indicatesSuccess()) {
+                    text = response.getResult().toString();
+                    System.out.println(response.getResult());
+                }
+                else
+                    System.out.println(response.getError().getMessage());
+            }
+            else{
+                System.out.println("ERROR");
+            }
             return null;
         }
 
@@ -236,6 +347,7 @@ public class ScheduleActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
         }
+
     }
 
     private static Cron buildCronSun(int min, int hour){
