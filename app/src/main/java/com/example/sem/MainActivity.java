@@ -25,12 +25,6 @@ import android.net.nsd.NsdServiceInfo;
 import android.net.nsd.NsdManager;
 import android.util.Log;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.google.gson.Gson;
-
-
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
@@ -40,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private NsdServiceInfo mServiceInfo;
     public static String mRPiAddress;
     public static String coffee_status = "";
+    public static String coffee_type = "ESPRESSO";
     private static final String SERVICE_TYPE = "_sem._tcp.";
 
     @Override
@@ -51,6 +46,16 @@ public class MainActivity extends AppCompatActivity {
         initializeResolveListener();
         initializeDiscoveryListener();
         mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
+        try {
+            //set time in mili
+            Thread.sleep(1000);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(mRPiAddress == ""){
+            server_issue();
+        }
     }
 
     private void initializeDiscoveryListener() {
@@ -88,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
                 mNsdManager.stopServiceDiscovery(this);
+                server_issue();
             }
 
             @Override
@@ -119,19 +125,42 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
+    private void server_issue(){
+        Intent intent = new Intent (this, IssueActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     public void make_espresso(View view){
-        // new make_espresso().execute();
-        new sort_form().execute();
+        coffee_type = "ESPRESSO";
+        new make_coffee().execute();
+        make_helper();
+    }
 
-        if(coffee_status == "SUCCESS") {
-            Intent intent = new Intent(this, MakeEspressoActivity.class);
-            startActivity(intent);
-        }
-        if(coffee_status != "SUCCESS") {
-            Intent intent = new Intent(this, MakeEspressoActivity.class);
-            startActivity(intent);
-        }
+    public void make_cap(View view){
+        coffee_type = "CAPPUCCINO";
+        new make_coffee().execute();
+        make_helper();
+    }
 
+    public void make_latte(View view){
+        coffee_type = "LATTE";
+        new make_coffee().execute();
+        make_helper();
+    }
+
+    public void make_helper(){
+        try {
+            //set time in mili
+            Thread.sleep(1000);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        Intent intent = new Intent (this, MakeEspressoActivity.class);
+        String message = coffee_status;
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 
     public void schedule_list(View view){
@@ -142,6 +171,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void scheduler_menu(View view){
         Intent intent = new Intent(this, SchedulerActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, mRPiAddress);
+        startActivity(intent);
+    }
+
+    public void settings(View view){
+        Intent intent = new Intent(this, SettingsActivity.class);
         intent.putExtra(EXTRA_MESSAGE, mRPiAddress);
         startActivity(intent);
     }
@@ -255,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private static class make_espresso extends AsyncTask<Void, Void, Void>{
+    private static class make_coffee extends AsyncTask<Void, Void, Void>{
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -275,11 +310,12 @@ public class MainActivity extends AppCompatActivity {
             // Construct new request
             String method = "sem_do";
             Map<String,Object> params = new HashMap<String,Object>();
+            params.put("coffee_type", coffee_type);
             params.put("rpc_call", "make_coffee_now");
             long epoch = System.currentTimeMillis()/1000;
             params.put("ts", epoch);
-            String str = String.format("rpc_call=make_coffee_now&ts=" +
-                    "%d87677fc06b0afc08cb86e008183390e5", epoch);
+            String str = String.format("coffee_type=%s&rpc_call=make_coffee_now&ts=" +
+                    "%d87677fc06b0afc08cb86e008183390e5", coffee_type, epoch);
             String sign = new String(Hex.encodeHex(DigestUtils.sha256(str)));
             params.put("sign", sign);
             String id = "09";
@@ -292,13 +328,16 @@ public class MainActivity extends AppCompatActivity {
                 // handle exception...
             }
             if(response != null) {
-                if (response.indicatesSuccess())
+                if (response.indicatesSuccess()) {
                     System.out.println(response.getResult());
+                    coffee_status = response.getResult().toString();
+                }
                 else
                     System.out.println(response.getError().getMessage());
             }
             else{
                 System.out.println("ERROR");
+                coffee_status = "ERROR: Server Issue";
             }
             return null;
         }
@@ -362,6 +401,4 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
         }
     }
-
-
 }

@@ -1,21 +1,15 @@
 package com.example.sem;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
+
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -32,7 +26,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,7 +71,7 @@ public class ScheduleListActivity extends AppCompatActivity {
             System.out.println(cron_desc);
             TextView tv = new TextView(this);
             tv.setTextAppearance(this, android.R.style.TextAppearance_Large);
-            tv.setText(String.format("%s. %s", data.id, cron_desc));
+            tv.setText(String.format("%s. %s, %s", data.id, cron_desc, data.coffee_type));
             ll.addView(tv);
         }
         EditText et = new EditText(this);
@@ -112,14 +105,17 @@ public class ScheduleListActivity extends AppCompatActivity {
         private int id;
         private int enabled;
         private String cron;
+        private String coffee_type;
 
         public int getId(){return id;}
         public int getEnabled(){return enabled;}
         public String getCron(){return cron;}
+        public String getCoffee(){return coffee_type;}
 
         public void setID(){this.id = id;}
         public void setEnabled(){this.enabled = enabled;}
         public void setCron(){this.cron = cron;}
+        public void setCoffee(){this.coffee_type = coffee_type;}
     }
 
     public String cronParser(String s){

@@ -15,19 +15,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/addButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="172dp"
-        android:layout_marginStart="172dp"
-        android:layout_marginTop="8dp"
-        android:onClick="create_schedule"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Wednesday"
-        app:srcCompat="@android:drawable/ic_input_add" />
-
     <ToggleButton
         android:id="@+id/Sunday"
         android:layout_width="40dp"
@@ -120,5 +107,38 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/Friday"
         app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <Button
+        android:id="@+id/espressoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="ESPRESSO"
+        app:layout_constraintEnd_toStartOf="@+id/capButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Wednesday" />
+
+    <Button
+        android:id="@+id/capButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="CAPPUCCINO"
+        app:layout_constraintEnd_toStartOf="@+id/latteButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/espressoButton"
+        app:layout_constraintTop_toBottomOf="@+id/Wednesday" />
+
+    <Button
+        android:id="@+id/latteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="LATTE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/capButton"
+        app:layout_constraintTop_toBottomOf="@+id/Wednesday" />
 
 </android.support.constraint.ConstraintLayout>
